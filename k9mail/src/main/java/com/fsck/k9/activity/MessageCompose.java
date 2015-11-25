@@ -3339,7 +3339,10 @@ public class MessageCompose extends K9Activity implements OnClickListener,
             MimeMessage message;
             try {
                 message = createMessage();
-            } catch (Exception me) {
+            } catch (OpenPgpApiException e){
+                Log.e(K9.LOG_TAG, "Failed to create new message for send or save.", e);
+                throw new RuntimeException("Failed to create a new message for send or save.", e);
+            } catch (MessagingException me) {
                 Log.e(K9.LOG_TAG, "Failed to create new message for send or save.", me);
                 throw new RuntimeException("Failed to create a new message for send or save.", me);
             }
