@@ -2033,7 +2033,7 @@ public class MessageListFragment extends Fragment implements OnItemClickListener
                     .append(beforePreviewText);
 
             if (mPreviewLines > 0) {
-                if (EncryptionType.valueOf(cursor.getString(ENCRYPTION_COLUMN)) != EncryptionType.NONE) {
+                if (EncryptionType.values()[cursor.getInt(ENCRYPTION_COLUMN)] != EncryptionType.NONE) {
                     messageStringBuilder.append(" *");
                     messageStringBuilder.append(context.getString(R.string.openpgp_result_encrypted));
                     messageStringBuilder.append('*');

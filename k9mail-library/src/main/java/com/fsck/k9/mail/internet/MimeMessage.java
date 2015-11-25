@@ -764,8 +764,8 @@ public class MimeMessage extends Message {
      */
     public MimeBodyPart toBodyPart() throws MessagingException {
         MimeHeader headerClone = mHeader.clone();
-        for (String header : headerClone.getHeaderNames()) {
-            if (!header.toLowerCase().startsWith("content-")) {
+        for (String header : headerClone.getHeaderNames()){
+            if (!header.toLowerCase().startsWith("content-")){
                 headerClone.removeHeader(header);
             }
         }

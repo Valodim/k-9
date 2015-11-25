@@ -105,7 +105,7 @@ class StoreSchemaDefinition implements LockableDatabase.SchemaDefinition {
                         "answered INTEGER default 0, " +
                         "forwarded INTEGER default 0, " +
                         "message_part_id INTEGER, " +
-                        "encryption_type TEXT" +
+                        "encryption_type INTEGER" +
                         ")");
 
                 db.execSQL("CREATE TABLE message_parts (" +
@@ -582,7 +582,7 @@ class StoreSchemaDefinition implements LockableDatabase.SchemaDefinition {
                     /*
                      * All messages are initialized to "no encrypted" even if encrypted.
                      */
-                    db.execSQL("ALTER TABLE messages ADD COLUMN encryption_type TEXT default 'NONE'");
+                    db.execSQL("ALTER TABLE messages ADD COLUMN encryption_type INTEGER default 0");
                 }
             }
 

@@ -114,7 +114,7 @@ public class LocalMessage extends MimeMessage {
 
         messagePartId = cursor.getLong(22);
         mimeType = cursor.getString(23);
-        setEncryptionType(EncryptionType.valueOf(cursor.getString(24)));
+        setEncryptionType(EncryptionType.values()[cursor.getInt(24)]);
     }
 
     long getMessagePartId() {
