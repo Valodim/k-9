@@ -54,6 +54,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.webkit.WebView;
@@ -85,7 +86,7 @@ import com.fsck.k9.controller.MessagingListener;
 import com.fsck.k9.crypto.OpenPgpApiException;
 import com.fsck.k9.crypto.PgpData;
 import com.fsck.k9.fragment.ProgressDialogFragment;
-import com.fsck.k9.helper.ContactItem;
+import com.fsck.k9.fragment.ProgressDialogFragment.CancelListener;
 import com.fsck.k9.helper.Contacts;
 import com.fsck.k9.helper.HtmlConverter;
 import com.fsck.k9.helper.IdentityHelper;
@@ -124,7 +125,7 @@ import org.openintents.openpgp.util.OpenPgpApi;
 import org.openintents.openpgp.util.OpenPgpServiceConnection;
 
 public class MessageCompose extends K9Activity implements OnClickListener,
-        ProgressDialogFragment.CancelListener {
+        CancelListener, OnFocusChangeListener {
 
     private static final int DIALOG_SAVE_OR_DISCARD_DRAFT_MESSAGE = 1;
     private static final int DIALOG_REFUSE_TO_SAVE_DRAFT_MARKED_ENCRYPTED = 2;
@@ -245,6 +246,18 @@ public class MessageCompose extends K9Activity implements OnClickListener,
 
     private RecipientPresenter recipientPresenter;
 
+    @Override
+    public void onFocusChange(View v, boolean hasFocus) {
+        switch(v.getId()) {
+            case R.id.message_content:
+            case R.id.subject:
+                if (hasFocus) {
+                    recipientPresenter.onNonRecipientFieldFocused();
+                }
+                break;
+        }
+    }
+
     enum Action {
         COMPOSE,
         REPLY,
@@ -273,7 +286,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
      */
     private boolean mForcePlainText = false;
 
-    private Button mChooseIdentityButton;
+    private TextView mChooseIdentityButton;
     private EditText mSubjectView;
     private EolConvertingEditText mSignatureView;
     private EolConvertingEditText mMessageContentView;
@@ -534,13 +547,15 @@ public class MessageCompose extends K9Activity implements OnClickListener,
 
         mContacts = Contacts.getInstance(MessageCompose.this);
 
-        mChooseIdentityButton = (Button) findViewById(R.id.identity);
+        mChooseIdentityButton = (TextView) findViewById(R.id.identity);
         mChooseIdentityButton.setOnClickListener(this);
 
+        /*
         if (mAccount.getIdentities().size() == 1 &&
                 Preferences.getPreferences(this).getAvailableAccounts().size() == 1) {
             mChooseIdentityButton.setVisibility(View.GONE);
         }
+        */
 
         RecipientView recipientView = new RecipientView(this);
         recipientPresenter = new RecipientPresenter(this, recipientView, mAccount);
@@ -601,6 +616,9 @@ public class MessageCompose extends K9Activity implements OnClickListener,
          */
 
         showOrHideQuotedText(QuotedTextMode.NONE);
+
+        mSubjectView.setOnFocusChangeListener(this);
+        mMessageContentView.setOnFocusChangeListener(this);
 
         mQuotedTextShow.setOnClickListener(this);
         mQuotedTextEdit.setOnClickListener(this);
@@ -750,6 +768,7 @@ public class MessageCompose extends K9Activity implements OnClickListener,
         } else {
             mEncryptLayout.setVisibility(View.GONE);
         }
+        mEncryptLayout.setVisibility(View.GONE);
 
         // Set font size of input controls
         int fontSize = mFontSizes.getMessageComposeInput();
@@ -1983,14 +2002,12 @@ public class MessageCompose extends K9Activity implements OnClickListener,
             case R.id.add_from_contacts:
                 recipientPresenter.onMenuAddFromContacts();
                 break;
-            case R.id.add_cc_bcc:
-                recipientPresenter.onMenuShowCcBcc();
-                break;
             case R.id.add_attachment:
                 onAddAttachment();
                 break;
             case R.id.read_receipt:
                 onReadReceipt();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
