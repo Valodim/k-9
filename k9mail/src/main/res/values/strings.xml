@@ -1164,4 +1164,5 @@ Please submit bug reports, contribute new features and ask questions at
     <string name="crypto_download_complete_message_to_decrypt">Click \'Download complete message\' to allow decryption.</string>
 
     <string name="error_cant_create_temporary_file">Couldn\'t create temporary file, memory full?</string>
+    <string name="add_from_contacts">Add from Contacts</string>
 </resources>
